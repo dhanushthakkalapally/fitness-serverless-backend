@@ -7,9 +7,36 @@ Parameters:
   UserPoolName: 
     Type: String
     Description: Enter the user pool name that you want to create.
+  DeploymentEnvironment:
+    Type: String
+    Description: Stage in which the Api's need to be deployed
 
-Resources: 
-  StageCognitoUserPool:
+Resources:
+  FitnessApiGateWay:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref DeploymentEnvironment
+      Auth:
+        DefaultAuthorizer: MyCognitoAuth
+        Authorizers:
+          MyCognitoAuth:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FitnessApiGateWay
+            Path: /
+            Method: GET
+
+  CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties: 
       UserPoolName: !Ref UserPoolName
@@ -18,10 +45,17 @@ Resources:
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
 
+  UserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId: !Ref CognitoUserPool
+        ClientName: frontend-client
+        GenerateSecret: false
+
 Outputs:
-  StageCognitoUserPool:
+  CognitoUserPool:
     Description: The DNSName of the backup load balancer
-    Value: !Ref StageCognitoUserPool
+    Value: !Ref CognitoUserPool
       
 
 
