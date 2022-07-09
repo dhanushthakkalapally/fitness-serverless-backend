@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: "2010-09-09"
+# Transform is a macro developed by aws, takes entire template written in SAM syntax and transforms and expands into CFN
+Transform: "AWS::Serverless-2016-10-31" 
+
+
+Parameters:
+  UserPoolName: 
+    Type: String
+    Description: Enter the user pool name that you want to create.
+
+Resources: 
+  StageCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties: 
+      UserPoolName: !Ref UserPoolName
+      UsernameAttributes:
+        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+
+Outputs:
+  StageCognitoUserPool:
+    Description: The DNSName of the backup load balancer
+    Value: !Ref StageCognitoUserPool
+      
+
+
+
+  
