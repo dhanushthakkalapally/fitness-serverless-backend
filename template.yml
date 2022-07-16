@@ -12,30 +12,6 @@ Parameters:
     Description: Stage in which the Api's need to be deployed
 
 Resources:
-  FitnessApiGateWay:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: !Ref DeploymentEnvironment
-      Auth:
-        DefaultAuthorizer: MyCognitoAuth
-        Authorizers:
-          MyCognitoAuth:
-            UserPoolArn: !GetAtt CognitoUserPool.Arn
-
-  MyFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src
-      Handler: app.lambda_handler
-      Runtime: python3.9
-      Events:
-        Root:
-          Type: Api
-          Properties:
-            RestApiId: !Ref FitnessApiGateWay
-            Path: /
-            Method: GET
-
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties: 
@@ -44,20 +20,52 @@ Resources:
         - email
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
-
+      Schema:
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Name: "preferred_username"
+          Required: true
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Name: "SEX"
+          Required: false
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 2
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      AutoVerifiedAttributes:
+        - "email"
+  
+  
   UserPoolClient:
-      Type: AWS::Cognito::UserPoolClient
-      Properties:
-        UserPoolId: !Ref CognitoUserPool
-        ClientName: frontend-client
-        GenerateSecret: false
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AccessTokenValidity: 10
+      IdTokenValidity: 10
+      RefreshTokenValidity: 5
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+      ClientName: "FitnessClient"
+      ExplicitAuthFlows:
+        - "ALLOW_ADMIN_USER_PASSWORD_AUTH"
+        - "ALLOW_USER_PASSWORD_AUTH"
+        - "ALLOW_USER_SRP_AUTH"
+        - "ALLOW_REFRESH_TOKEN_AUTH"
+      GenerateSecret: false
+      UserPoolId: !Ref CognitoUserPool
+
 
 Outputs:
   CognitoUserPool:
-    Description: The DNSName of the backup load balancer
+    Description: The CognitoUserPool for the fitness
     Value: !Ref CognitoUserPool
-      
-
-
-
+  UserPoolClient:
+    Description: The ClientId for the user pool
+    Value: !Ref UserPoolClient
   
