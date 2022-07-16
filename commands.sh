@@ -1,0 +1,1 @@
+aws cloudformation create-stack --stack-name user-pool-stack --parameters ParameterKey=UserPoolName,ParameterValue=dev-sanju.com ParameterKey=DeploymentEnvironment,ParameterValue=stage --template-body file://template.yml --capabilities CAPABILITY_AUTO_EXPAND

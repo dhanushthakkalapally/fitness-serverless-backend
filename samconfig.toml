@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "my-first-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-to9qdj1hi3nl"
+s3_prefix = "my-first-app"
+region = "eu-west-2"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "UserPoolName=\"sanju-dev.com\" DeploymentEnvironment=\"stage\""
+image_repositories = []
+disable_rollback = true

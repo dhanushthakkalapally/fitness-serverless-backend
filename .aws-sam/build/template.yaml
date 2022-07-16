@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  UserPoolName:
+    Type: String
+    Description: Enter the user pool name that you want to create.
+  DeploymentEnvironment:
+    Type: String
+    Description: Stage in which the Api's need to be deployed
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName:
+        Ref: UserPoolName
+      UsernameAttributes:
+      - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      Schema:
+      - AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Name: preferred_username
+        Required: true
+      - AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Name: SEX
+        Required: false
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+        - Name: verified_email
+          Priority: 2
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      AutoVerifiedAttributes:
+      - email
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AccessTokenValidity: 10
+      IdTokenValidity: 10
+      RefreshTokenValidity: 5
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+      ClientName: FitnessClient
+      ExplicitAuthFlows:
+      - ALLOW_ADMIN_USER_PASSWORD_AUTH
+      - ALLOW_USER_PASSWORD_AUTH
+      - ALLOW_USER_SRP_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      UserPoolId:
+        Ref: CognitoUserPool
+Outputs:
+  CognitoUserPool:
+    Description: The CognitoUserPool for the fitness
+    Value:
+      Ref: CognitoUserPool
+  UserPoolClient:
+    Description: The ClientId for the user pool
+    Value:
+      Ref: UserPoolClient
