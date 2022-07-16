@@ -11,9 +11,9 @@ def lambda_handler(message, context):
     user_uuid = message["requestContext"]["authorizer"]["claims"]["sub"]
     request_body = json.loads(message["body"])
     date = request_body.get("date", str(datetime.datetime.now().date()))
-    calorie_dict = {"morning": [], "lunch": [], "dinner": [], "user_uuid": user_uuid, "date": date}
+    calorie_dict = {"morning": {"SS": ["eggs"]}, "lunch": {"SS": ["milk"]}, "dinner": {"SS": ["water"]}, "user_uuid": {"S": user_uuid}, "date": {"S": date}}
     
-    response = client.put_item(TableName = TABLE_NAME, item=calorie_dict)
+    response = client.put_item(TableName = TABLE_NAME, Item=calorie_dict)
     
     print(response)
 
