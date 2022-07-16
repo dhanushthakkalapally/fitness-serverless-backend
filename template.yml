@@ -101,6 +101,25 @@ Resources:
             Path: /hello
             Method: get
             RestApiId: !Ref APIGateway
+  
+  DynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: user_uuid
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_uuid
+          KeyType: HASH
+        - AttributeName: date
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 2
+      TableName: daily_calorie
+
 
 Outputs:
   CognitoUserPool:
@@ -109,4 +128,7 @@ Outputs:
   UserPoolClient:
     Description: The ClientId for the user pool
     Value: !Ref UserPoolClient
+  DynamoTable:
+    Description: Here is the Dynamodb table created
+    Value: !Ref DynamoTable
   
