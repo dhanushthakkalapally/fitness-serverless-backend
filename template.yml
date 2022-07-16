@@ -59,6 +59,20 @@ Resources:
         - "ALLOW_REFRESH_TOKEN_AUTH"
       GenerateSecret: false
       UserPoolId: !Ref CognitoUserPool
+    
+  APIGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: development
+      Auth: 
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn: !Ref CognitoUserPool
+            Identity: 
+              Header: Authorization
+        DefaultAuthorizer: CognitoAuth
+        # there are more advanced options please refer to the documentation for more
+
 
 
 Outputs:
