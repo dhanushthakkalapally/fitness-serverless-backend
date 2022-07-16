@@ -1,13 +1,24 @@
 import json
 import boto3
+import datetime
+import os
 
+region_name = os.environ["REGION_NAME"]
+client = boto3.client("dynamodb", region_name=region_name)
+TABLE_NAME = os.environ.get("TABLE_NAME") 
 
 def lambda_handler(message, context):
-
-    print(message);
+    user_uuid = message["requestContext"]["authorizer"]["claims"]["sub"]
+    request_body = json.loads(message["body"])
+    date = request_body.get("date", str(datetime.datetime.now().date()))
+    calorie_dict = {"morning": [], "lunch": [], "dinner": [], "user_uuid": user_uuid, "date": date}
+    
+    response = client.put_item(TableName = TABLE_NAME, item=calorie_dict)
+    
+    print(response)
 
     return {
-        "statudCode": 200,
+        "statusCode": 201,
         "headers": {},
-        "body": json.dumps(message["body"])
+        "body": json.dumps(response)
     }

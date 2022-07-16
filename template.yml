@@ -103,6 +103,13 @@ Resources:
             Path: /CreateDailyCalories
             Method: POST
             RestApiId: !Ref APIGateway
+      Environment:
+        Variables:
+          REGION_NAME: !Ref AWS::Region
+          TABLE_NAME: !Ref DynamoTable
+      Policies: 
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoTable
   
   DynamoTable:
     Type: AWS::DynamoDB::Table
