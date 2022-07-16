@@ -67,11 +67,29 @@ Resources:
       Auth: 
         Authorizers:
           CognitoAuth:
-            UserPoolArn: !Ref CognitoUserPool
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
             Identity: 
               Header: Authorization
         DefaultAuthorizer: CognitoAuth
         # there are more advanced options please refer to the documentation for more
+  
+  APIHandlers:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties: 
+            Path: /
+            Method: get
+            RestApiId: !Ref APIGateway
+      Runtime: "python3.9"
+      CodeUri: ./src
+      Handler: app.lambda_handler
+        
+
+        
+
 
 
 

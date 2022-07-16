@@ -55,6 +55,36 @@ Resources:
       GenerateSecret: false
       UserPoolId:
         Ref: CognitoUserPool
+  APIGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: development
+      Auth:
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn:
+              Fn::GetAtt:
+              - CognitoUserPool
+              - Arn
+            Identity:
+              Header: Authorization
+        DefaultAuthorizer: CognitoAuth
+  APIHandlers:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+            RestApiId:
+              Ref: APIGateway
+      Runtime: python3.9
+      CodeUri: APIHandlers
+      Handler: app.lambda_handler
+    Metadata:
+      SamResourceId: APIHandlers
 Outputs:
   CognitoUserPool:
     Description: The CognitoUserPool for the fitness
