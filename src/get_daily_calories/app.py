@@ -1,21 +1,5 @@
 import json
-import boto3
-import datetime
-import os
 
-# {
-#     "date": "2022-07-16",
-#     "nutritional_info": {
-#         "breakfast": {"items": [{"name": "string", "calories": "number"}]}, 
-#         "lunch": {"items": [{"name": "string", "calories": "number"}]}, 
-#         "dinner": {"items": [{"name": "string", "calories": "number"}]}, 
-#         "snacks": {"items": [{"name": "string", "calories": "number"}]}
-#     } 
-# }
-
-region_name = os.environ["REGION_NAME"]
-client = boto3.client("dynamodb", region_name=region_name)
-TABLE_NAME = os.environ.get("TABLE_NAME") 
 
 def lambda_handler(message, context):
     user_uuid = message["pathParameters"]["user_uuid"]

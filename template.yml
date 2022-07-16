@@ -15,6 +15,10 @@ Globals:
   Function:
     Runtime: "python3.9"
     CodeUri: ./src
+    Environment:
+        Variables:
+          REGION_NAME: !Ref AWS::Region
+          TABLE_NAME: !Ref DynamoTable
 
 Resources:
   CognitoUserPool:
@@ -103,10 +107,22 @@ Resources:
             Path: /CreateDailyCalories
             Method: POST
             RestApiId: !Ref APIGateway
-      Environment:
-        Variables:
-          REGION_NAME: !Ref AWS::Region
-          TABLE_NAME: !Ref DynamoTable
+      Policies: 
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoTable
+    
+  GetDailyCalories:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      CodeUri: ./src/get_daily_calories
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties: 
+            Path: /users/{user_uuid}/daily/{date}/calorieConsumptions
+            Method: get
+            RestApiId: !Ref APIGateway
       Policies: 
         - DynamoDBCrudPolicy:
             TableName: !Ref DynamoTable
