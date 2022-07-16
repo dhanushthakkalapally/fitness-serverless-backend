@@ -82,6 +82,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
+      CodeUri: ./src/welcome
       Events:
         ApiEvent:
           Type: Api
@@ -90,16 +91,17 @@ Resources:
             Path: /
             RestApiId: !Ref APIGateway
   
-  APIHandler2:
+  CreateDailyCalories:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: app.lambda_handler1
+      Handler: app.lambda_handler
+      CodeUri: ./src/create_daily_calories
       Events:
         ApiEvent:
           Type: Api
           Properties: 
-            Path: /hello
-            Method: get
+            Path: /CreateDailyCalories
+            Method: POST
             RestApiId: !Ref APIGateway
   
   DynamoTable:
