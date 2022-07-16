@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 # Transform is a macro developed by aws, takes entire template written in SAM syntax and transforms and expands into CFN
-Transform: "AWS::Serverless-2016-10-31" 
-
+Transform: "AWS::Serverless-2016-10-31"     
 
 Parameters:
   UserPoolName: 
@@ -10,6 +9,12 @@ Parameters:
   DeploymentEnvironment:
     Type: String
     Description: Stage in which the Api's need to be deployed
+
+
+Globals:
+  Function:
+    Runtime: "python3.9"
+    CodeUri: ./src
 
 Resources:
   CognitoUserPool:
@@ -73,25 +78,29 @@ Resources:
         DefaultAuthorizer: CognitoAuth
         # there are more advanced options please refer to the documentation for more
   
-  APIHandlers:
+  APIHandler1:
     Type: AWS::Serverless::Function
     Properties:
+      Handler: app.lambda_handler
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: get
+            Path: /
+            RestApiId: !Ref APIGateway
+  
+  APIHandler2:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler1
       Events:
         ApiEvent:
           Type: Api
           Properties: 
-            Path: /
+            Path: /hello
             Method: get
             RestApiId: !Ref APIGateway
-      Runtime: "python3.9"
-      CodeUri: ./src
-      Handler: app.lambda_handler
-        
-
-        
-
-
-
 
 Outputs:
   CognitoUserPool:
