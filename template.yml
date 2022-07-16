@@ -95,7 +95,7 @@ Resources:
             Path: /
             RestApiId: !Ref APIGateway
   
-  CreateDailyCalories:
+  CreateDailyCaloriesConsumptions:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
@@ -104,14 +104,14 @@ Resources:
         ApiEvent:
           Type: Api
           Properties: 
-            Path: /CreateDailyCalories
+            Path: /users/{user_uuid}/daily/{date}/dailyCalorieConsumptions
             Method: POST
             RestApiId: !Ref APIGateway
       Policies: 
         - DynamoDBCrudPolicy:
             TableName: !Ref DynamoTable
     
-  GetDailyCalories:
+  GetDailyCalorieConsumptions:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
@@ -120,7 +120,7 @@ Resources:
         ApiEvent:
           Type: Api
           Properties: 
-            Path: /users/{user_uuid}/daily/{date}/calorieConsumptions
+            Path: /users/{user_uuid}/daily/{date}/dailyCalorieConsumptions
             Method: get
             RestApiId: !Ref APIGateway
       Policies: 
